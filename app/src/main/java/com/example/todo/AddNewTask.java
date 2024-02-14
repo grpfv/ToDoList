@@ -101,44 +101,6 @@ import java.util.Locale;
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
                         Toast.makeText(requireContext(),"Task Added",Toast.LENGTH_SHORT).show();
-
-                        // Get due date and time components
-                        String[] dateComponents = taskmodel.getDueDay().split("/");
-                        int year = Integer.parseInt(dateComponents[2]);
-                        int month = Integer.parseInt(dateComponents[0]); // Month is 0-based
-                        int day = Integer.parseInt(dateComponents[1]);
-
-                        String[] timeAndAmPm = taskmodel.getDueTime().split(" ");
-                        String time = timeAndAmPm[0];
-
-                        String[] timeComponents = time.split(":");
-                        int hour = Integer.parseInt(timeComponents[0]);
-                        int minute = Integer.parseInt(timeComponents[1]);
-
-                        if (timeAndAmPm[1].equalsIgnoreCase("PM")) {
-                            hour += 12;
-                        }
-
-
-                        // Set up AlarmManager to trigger the AlarmReceiver at the specified due date and time
-                        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-                        Intent alarmIntent = new Intent(requireContext(), NotificationReceiver.class);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month - 1); // Month is 0-based
-                        calendar.set(Calendar.DAY_OF_MONTH, day);
-                        calendar.set(Calendar.HOUR_OF_DAY, hour);
-                        calendar.set(Calendar.MINUTE, minute);
-                        calendar.set(Calendar.SECOND, 0);
-
-                        long alarmTime = calendar.getTimeInMillis();
-                        Log.d("AlarmTime", "Calculated alarm time: " + alarmTime);
-
-                        // Set a one-time alarm
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
-
                         dismiss();
                     }else{
                         Toast.makeText(requireContext(),"Failed Adding Task",Toast.LENGTH_SHORT).show();
