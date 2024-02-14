@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#EFF0EE"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/todolist_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TO-DO LIST"
+        android:textColor="#113946"
+        android:textStyle="bold"
+        android:textSize="34sp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"/>
+
+    <ImageButton
+        android:id="@+id/addTaskButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/add"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:layout_alignParentEnd="true"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/todorecyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        android:layout_below="@+id/todolist_title"/>
+
+</RelativeLayout>
