@@ -1,5 +1,7 @@
 package com.example.todo;
 
+import com.google.firebase.firestore.Exclude;
+
 public class TaskModel {
     String title;
     String subject;
@@ -39,5 +41,15 @@ public class TaskModel {
 
     public void setDueTime(String dueTime) {
         this.dueTime = dueTime;
+    }
+
+    private boolean isChecked;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

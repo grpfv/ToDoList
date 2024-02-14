@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.Calendar;
 
@@ -33,7 +34,35 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
         holder.taskTextView.setText(taskModel.title);
         holder.dueDateTextView.setText(taskModel.dueDay);
 
-        setupAlarmForTask(taskModel, position);
+        holder.checkbox.setOnCheckedChangeListener(null);// Remove previous listener to avoid conflicts
+        // Set checkbox state
+        holder.checkbox.setChecked(taskModel.isChecked());
+
+        // Handle checkbox state changes
+        holder.checkbox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            // Update the TaskModel with the new checkbox state
+            taskModel.setChecked(isChecked);
+
+            // Update the Firestore document with the new checkbox state
+            updateCheckboxState(position, isChecked);
+
+            if (isChecked) {
+                cancelAlarmForTask(position);
+            } else {
+                // If the task is unchecked, set up the alarm for this task
+                setupAlarmForTask(taskModel, position);
+            }
+        });
+
+        if (!taskModel.isChecked()) {
+            setupAlarmForTask(taskModel, position);
+        }
+    }
+
+    private void updateCheckboxState(int position, boolean isChecked) {
+        getSnapshots().getSnapshot(position).getReference().update("checked", isChecked)
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Checkbox state updated successfully"))
+                .addOnFailureListener(e -> Log.e("Firestore", "Error updating checkbox state", e));
     }
 
     private void setupAlarmForTask(TaskModel taskmodel, int position) {
@@ -80,6 +109,15 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
     }
 
+    private void cancelAlarmForTask(int position) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(context, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Cancel the alarm for the specified PendingIntent
+        alarmManager.cancel(pendingIntent);
+    }
+
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -90,12 +128,14 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
 
 
     class TaskViewHolder extends RecyclerView.ViewHolder{
+        MaterialCheckBox checkbox;
         TextView taskTextView, dueDateTextView;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             taskTextView = itemView.findViewById(R.id.taskTextView);
             dueDateTextView = itemView.findViewById(R.id.dueDateTextView);
+            checkbox = itemView.findViewById(R.id.checkbox);
         }
     }
 }
