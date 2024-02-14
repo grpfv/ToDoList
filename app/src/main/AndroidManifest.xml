@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.SEND_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NOTIFICATION_POLICY_ACCESS"/>
 
     <application
         android:allowBackup="true"
@@ -29,14 +32,7 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".NotificationReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="your_custom_action_string" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".NotificationReceiver" />
     </application>
 
 </manifest>
