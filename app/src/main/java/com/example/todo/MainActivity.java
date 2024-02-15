@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setupRecyclerView(){
-        Query query = TaskUtility.getCollectionReferenceForToDo();
+        Query query = TaskUtility.getCollectionReferenceForToDo().orderBy("dueDateTime", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<TaskModel> options = new FirestoreRecyclerOptions.Builder<TaskModel>().setQuery(query, TaskModel.class).build();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

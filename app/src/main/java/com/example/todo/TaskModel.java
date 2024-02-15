@@ -7,6 +7,9 @@ public class TaskModel {
     String subject;
     String dueDay;
     String dueTime;
+    String remindDay;
+    String remindTime;
+    String dueDateTime;
 
     public TaskModel() {
     }
@@ -27,20 +30,28 @@ public class TaskModel {
         this.subject = subject;
     }
 
-    public String getDueDay() {
-        return dueDay;
+    public String getDueDay() { return dueDay; }
+
+    public void setDueDay(String dueDay) { this.dueDay = dueDay;}
+
+    public String getDueTime() { return dueTime; }
+
+    public void setDueTime(String dueTime) {this.dueTime = dueTime;}
+
+    public String getRemindDay() {
+        return remindDay;
     }
 
-    public void setDueDay(String dueDay) {
-        this.dueDay = dueDay;
+    public void setRemindDay(String remindDay) {
+        this.remindDay = remindDay;
     }
 
-    public String getDueTime() {
-        return dueTime;
+    public String getRemindTime() {
+        return remindTime;
     }
 
-    public void setDueTime(String dueTime) {
-        this.dueTime = dueTime;
+    public void setRemindTime(String remindTime) {
+        this.remindTime = remindTime;
     }
 
     private boolean isChecked;
@@ -51,5 +62,13 @@ public class TaskModel {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public String getDueDateTime() {
+        return dueDateTime;
+    }
+
+    public void setDueDateTime(String dueDateTime) {
+        this.dueDateTime = dueDateTime;
     }
 }
