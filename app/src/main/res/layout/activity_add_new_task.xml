@@ -99,6 +99,9 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+
+
+    <!-- Due Day -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardDueDay"
         android:layout_width="match_parent"
@@ -134,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="8dp"
-                android:hint="Enter Subject Name"
+                android:hint="Due Time"
                 android:textSize="14sp"
                 android:focusable="false"/>
         </LinearLayout>
@@ -157,6 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:padding="6dp">
 
             <TextView
@@ -164,119 +168,83 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="   DUE TIME:"
+                android:layout_marginStart="8dp"
+                android:text="DUE TIME:"
                 android:textColor="#113946"
                 android:textSize="18sp"
                 android:textStyle="bold" />
             <EditText
                 android:id="@+id/addDueTime"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
                 android:hint="Enter Due Time"
                 android:textSize="14sp"
                 android:focusable="false"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Remind Day -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardRemindDay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cardDueTime"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="100dp"
-        android:elevation="4dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="6dp"
-            android:gravity="center_vertical"
-            android:visibility="visible">
-
-            <TextView
-                android:id="@+id/labelRemindDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:layout_marginStart="8dp"
-                android:text="REMIND DAY:"
-                android:textColor="#113946"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/addRemindday"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="8dp"
-                android:hint="REMIND TIME"
-                android:textSize="14sp"
-                android:focusable="false"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-
-    <!-- Remind TIME -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardRemindTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cardRemindDay"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="100dp"
-        android:elevation="4dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="6dp">
-
-            <TextView
-                android:id="@+id/labelRemindTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:layout_marginStart="8dp"
-                android:text="REMIND TIME:"
-                android:textColor="#113946"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-            <EditText
-                android:id="@+id/addRemindTime"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="8dp"
-                android:hint="Enter Remind Time"
-                android:textSize="14sp"
-                android:focusable="false"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <TimePicker
-        android:id="@+id/timePicker"
+    <TextView
+        android:id="@+id/RemindMeBefore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cardRemindTime"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:layout_marginTop="24dp"
+        android:text="Remind Me Before"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:layout_below="@id/cardDueTime"
+        />
+
+    <LinearLayout
+        android:id="@+id/Reminder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/RemindMeBefore"
+        android:gravity="center">
+
+        <NumberPicker
+            android:id="@+id/numberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_marginEnd="16dp"
+        />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <RadioButton
+                android:id="@+id/radioMinutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Minutes"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:id="@+id/radioHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hours"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:id="@+id/radioDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Days"
+                tools:ignore="TouchTargetSizeCheck" />
+        </RadioGroup>
+    </LinearLayout>
 
     <!-- Add to Timetable Button -->
     <Button
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cardRemindTime"
+        android:layout_below="@id/Reminder"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginTop="16dp"
@@ -287,7 +255,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cardRemindTime"
+        android:layout_below="@id/Reminder"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:orientation="horizontal">

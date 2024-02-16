@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -36,12 +39,15 @@ import java.util.Locale;
 
 public class AddNewTask extends DialogFragment {
 
-    private EditText addTaskTitle, addSubject, addDueTime, addDueday, addRemindTime, addRemindday;
+    private EditText addTaskTitle, addSubject, addDueTime, addDueday;
     Button btnAdd, btnDelete, btnEdit;
     TextView editTask;
-    String taskId, edittitle, editsubject, editdueDay, editdueTime, editremindDay, editremindTime;
+    String taskId, edittitle, editsubject, editdueDay, editdueTime;
     Boolean isEditMode = false;
     private int taskPosition;
+    NumberPicker numberPicker;
+    RadioGroup radioGroup;
+    RadioButton radioMinutes, radioDays, radioHours;
 
     @Nullable
     @Override
@@ -50,34 +56,35 @@ public class AddNewTask extends DialogFragment {
 
         addTaskTitle = view.findViewById(R.id.addTask);
         addSubject = view.findViewById(R.id.addSubject);
+        editTask = view.findViewById(R.id.addTasks);
         addDueday = view.findViewById(R.id.addDueday);
         addDueTime = view.findViewById(R.id.addDueTime);
-        editTask = view.findViewById(R.id.addTasks);
 
-        addRemindday = view.findViewById(R.id.addRemindday);
-        addRemindTime = view.findViewById(R.id.addRemindTime);
+        numberPicker = view.findViewById(R.id.numberPicker);
+        radioGroup = view.findViewById(R.id.radioGroup);
+        radioMinutes = view.findViewById(R.id.radioMinutes);
+        radioDays = view.findViewById(R.id.radioDays);
+        radioHours = view.findViewById(R.id.radioHours);
 
         addDueday.setOnClickListener(view1 -> showDatePicker(addDueday));
         addDueTime.setOnClickListener(view12 -> showTimePicker(addDueTime));
-
-        addRemindday.setOnClickListener(view1 -> showDatePicker(addRemindday));
-        addRemindTime.setOnClickListener(view12 -> showTimePicker(addRemindTime));
 
         btnDelete = view.findViewById(R.id.btnDelete);
         btnEdit = view.findViewById(R.id.btnEdit);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(v-> saveTask(taskPosition));
 
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(60);
+
 
         Bundle args = getArguments();
         if (args != null) {
             taskId = args.getString("taskId");
-            edittitle=args.getString("title");
+            edittitle = args.getString("title");
             editsubject = args.getString("subject");
-            editdueDay= args.getString("dueDay");
-            editdueTime=args.getString("dueTime");
-            editremindDay=args.getString("remindDay");
-            editremindTime = args.getString("remindTime");
+            editdueDay = args.getString("dueDay");
+            editdueTime = args.getString("dueTime");
             taskPosition = args.getInt("position", -1);
 
         }
@@ -90,8 +97,6 @@ public class AddNewTask extends DialogFragment {
         addSubject.setText(editsubject);
         addDueday.setText(editdueDay);
         addDueTime.setText(editdueTime);
-        addRemindday.setText(editremindDay);
-        addRemindTime.setText(editremindTime);
 
         if(isEditMode){
             editTask.setText("EDIT SCHEDULE");
@@ -111,35 +116,35 @@ public class AddNewTask extends DialogFragment {
     void saveTask(int taskPosition){
         String taskTitle = addTaskTitle.getText().toString();
         String taskSubject= addSubject.getText().toString();
+
         String taskDueday = addDueday.getText().toString();
         String taskDuetime = addDueTime.getText().toString();
 
-        String taskRemindday = addRemindday.getText().toString();
-        String taskRemindtime = addRemindTime.getText().toString();
+        String reminderInterval = String.valueOf(numberPicker.getValue());
+        String timeUnit = "";
 
-        if (taskTitle.isEmpty() || taskTitle == null){
+        // Determine the selected time unit
+        if (radioMinutes.isChecked()) {
+            timeUnit = "minutes";
+        } else if (radioDays.isChecked()) {
+            timeUnit = "days";
+        } else if (radioHours.isChecked()) {
+            timeUnit = "hours";
+        }
+
+        if (taskTitle.isEmpty()){
             Toast.makeText(requireContext(), "Please enter Title", Toast.LENGTH_SHORT).show();
             addTaskTitle.setError("Task Title is required");
             return;
         }
-        if (taskDueday.isEmpty() || taskDueday == null){
+        if (taskDueday.isEmpty()){
             Toast.makeText(requireContext(), "Please enter Due Day", Toast.LENGTH_SHORT).show();
             addDueday.setError("Due Day is required");
             return;
         }
-        if (taskDuetime.isEmpty() || taskDuetime == null){
+        if (taskDuetime.isEmpty()){
             Toast.makeText(requireContext(), "Please enter Due Time", Toast.LENGTH_SHORT).show();
             addDueTime.setError("Due Time is required");
-            return;
-        }
-        if (taskRemindday.isEmpty() || taskRemindday == null){
-            Toast.makeText(requireContext(), "Please enter Remind Day", Toast.LENGTH_SHORT).show();
-            addRemindday.setError("Due Day is required");
-            return;
-        }
-        if (taskRemindtime.isEmpty() || taskRemindtime == null){
-            Toast.makeText(requireContext(), "Please enter Remind Time", Toast.LENGTH_SHORT).show();
-            addRemindTime.setError("Due Time is required");
             return;
         }
 
@@ -152,8 +157,8 @@ public class AddNewTask extends DialogFragment {
         String dueDateTime = taskDueday + " " + taskDuetime;
         taskmodel.setDueDateTime(dueDateTime);
 
-        taskmodel.setRemindDay(taskRemindday);
-        taskmodel.setRemindTime(taskRemindtime);
+        taskmodel.setReminderInterval(reminderInterval);
+        taskmodel.setTimeUnit(timeUnit);
 
         saveTasktoFirebase(taskmodel, taskPosition);
 

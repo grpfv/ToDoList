@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.todorecyclerview);
         ImageButton addTaskButton = findViewById(R.id.addTaskButton);
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
         addTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override

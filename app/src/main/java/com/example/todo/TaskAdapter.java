@@ -77,8 +77,6 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
             String subject = taskModel.getSubject();
             String dueDay = taskModel.getDueDay();
             String dueTime = taskModel.getDueTime();
-            String remindDay = taskModel.getRemindDay();
-            String remindTime = taskModel.getRemindTime();
 
             AddNewTask addTaskFragment = new AddNewTask();
 
@@ -90,8 +88,6 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
             args.putString("subject", subject);
             args.putString("dueDay", dueDay);
             args.putString("dueTime", dueTime);
-            args.putString("remindDay", remindDay);
-            args.putString("remindTime", remindTime);
 
             args.putInt("position", position);
 
@@ -113,13 +109,13 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
     }
 
     private void setupAlarmForTask(TaskModel taskmodel, int position) {
-        // Get Remind date and time components
-        String[] dateComponents = taskmodel.getRemindDay().split("/");
+        // Get Due date and time components
+        String[] dateComponents = taskmodel.getDueDay().split("/");
         int year = Integer.parseInt(dateComponents[2]);
         int month = Integer.parseInt(dateComponents[0]); // Month is 0-based
         int day = Integer.parseInt(dateComponents[1]);
 
-        String[] timeAndAmPm = taskmodel.getRemindTime().split(" ");
+        String[] timeAndAmPm = taskmodel.getDueTime().split(" ");
         String time = timeAndAmPm[0];
 
         String[] timeComponents = time.split(":");
@@ -132,7 +128,7 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
             hour = 0;
         }
 
-        // Set up AlarmManager to trigger the AlarmReceiver at the specified Remind date and time
+        // Set up AlarmManager to trigger the AlarmReceiver at the specified time before Due date and time
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(context, NotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, alarmIntent, PendingIntent.FLAG_MUTABLE);
@@ -145,17 +141,32 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
 
+        String timeUnit = taskmodel.getTimeUnit();
+        int reminderInterval = Integer.parseInt(taskmodel.getReminderInterval());
+
+        switch (timeUnit) {
+            case "minutes":
+                calendar.add(Calendar.MINUTE, -reminderInterval);
+                break;
+            case "hours":
+                calendar.add(Calendar.HOUR_OF_DAY, -reminderInterval);
+                break;
+            case "days":
+                calendar.add(Calendar.DAY_OF_MONTH, -reminderInterval);
+                break;
+        }
+
         Log.d("AlarmTime", "Calculated alarm time: " + calendar.getTimeInMillis() + " (" + calendar.getTimeZone().getID() + ")");
         Log.d("SystemTime", "alarm Current system time: " + System.currentTimeMillis() + " (" + TimeZone.getDefault().getID() + ")");
 
         if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            // The Remind date and time have already passed; no need to set the alarm
+            // The Due date and time have already passed; no need to set the alarm
             Log.d("AlarmSkipped", "Skipped setting alarm for task at position " + position);
             return;
         }
 
         long alarmTime = calendar.getTimeInMillis();
-        Log.d("AlarmTime", "Calculated alarm time: " + alarmTime);
+        Log.d("AlarmTime", "Calculated alarm time: " + calendar.getTime());
 
         // Set a one-time alarm
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
@@ -172,7 +183,7 @@ public class TaskAdapter extends FirestoreRecyclerAdapter<TaskModel, TaskAdapter
 
     private String formatDueDate(TaskModel taskModel) {
         String dueDay = taskModel.dueDay;
-        String dueTime = taskModel.dueTime; // Assuming you have a field called dueTime in your TaskModel
+        String dueTime = taskModel.dueTime;
         return String.format("%s | %s", dueDay, dueTime);
 
     }
